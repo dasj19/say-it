@@ -1,10 +1,10 @@
 === Say It! ===
 Contributors: dadipaq
-Tags: text-to-speech, speech, voice, tts, google-tts, amazon-polly
+Tags: text-to-speech, audio, voice, tts, text-to-audio, amazon-polly, google-voice
 Requires at least: 5.0.0
-Tested up to: 5.4.0
-Stable tag: 3.0.3
-Requires PHP: 7.1.0
+Tested up to: 5.8.2
+Stable tag: 4.0.1
+Requires PHP: 7.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,9 +20,16 @@ Once installed, you just need to wrap any content between [sayit] shortcode. Onc
 
 Want better quality ? Say It! now offers Google Cloud TTS and Amazon Polly compatibility !
 
-= Parameters (for HTML5 Speech only) =
+= Parameters (for HTML5 Speech) =
 * lang - Use a language different from the default one
 * speed - speed of speech (recommanded between 0.5 and 1.5)
+* block - set to "1" to make it work on multiple paragraphs at once
+
+= Parameters (for Google TTS) =
+* lang - Use a language different from the default one
+* block - set to "1" to make it work on multiple paragraphs at once
+
+= Parameters (for Amazon Polly) =
 * block - set to "1" to make it work on multiple paragraphs at once
 
 = Exemple =
@@ -103,3 +110,29 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 
 = 3.0.3 =
 * Prevent audio play when click on a link inside sayit shortcode
+
+= 3.0.4 =
+* Fix error displayed on footer
+
+= 3.0.5 =
+* Added chinese language to html5 & google TTS
+
+= 3.0.6 =
+* Fixed a bug when using special character with html5
+
+= 3.0.7 =
+* Remove missadded "hello" word
+
+= 3.0.8 =
+* Added option to change google language with shortcode
+
+= 3.0.9 =
+* Bug fix
+
+= 4.0.0 =
+* Refactored code
+* New admin interface
+* Added Gutenberg support
+
+= 4.0.1 =
+* Fixed an error due to php DOMDocument

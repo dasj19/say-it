@@ -13,19 +13,16 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
-
-$options = get_option($this->plugin_name);
-// $amazon_voices = $this->amazon_voices['Voices'];
+$options = $this->options;
+$amazon_voices = $this->amazon_polly->get_voices();
 $amazon_voice = ( isset( $options['amazon_voice'] ) && ! empty( $options['amazon_voice'] ) ) ? esc_attr( $options['amazon_voice'] ) : 'Kimberly';
 ?>
 
-<?php if($this->amazon_aws_error): ?>
-    <p class="notice notice-warning inline">Oups, something wrong with Amazon AWS Configuration, please check the Amazon Tab<br><?php echo print_r($this->amazon_aws_error); ?></p>
+<?php if($this->amazon_polly->get_aws_errors()): ?>
+    <p class="notice notice-warning inline">Oups, something wrong with Amazon AWS Configuration, please check the Amazon Tab<br><?php echo print_r($this->amazon_polly->get_aws_errors()); ?></p>
 <?php else: ?>
-
     <table class="form-table">
         <tbody>
-
             <tr>
                 <th scope="row">
                     <label for="<?php echo $this->plugin_name; ?>[amazon_voice]">
@@ -33,11 +30,11 @@ $amazon_voice = ( isset( $options['amazon_voice'] ) && ! empty( $options['amazon
                     </label>
                 </th>
                 <td>
-                <input type="text" value="<?php echo $amazon_voice; ?>" id="<?php echo $this->plugin_name; ?>-amazon_voice" name="<?php echo $this->plugin_name; ?>[amazon_voice]">
-                <p class="description">
-                    Please enter the Voice ID you want, you can find a list of Amazon Polly Voice here :<br>
-                    <a target="_blank" href="https://docs.aws.amazon.com/polly/latest/dg/voicelist.html">https://docs.aws.amazon.com/polly/latest/dg/voicelist.html</a>
-                </p>
+                <select name="<?php echo $this->plugin_name; ?>[amazon_voice]" id="<?php echo $this->plugin_name; ?>-amazon_voice">
+                    <?php foreach ($amazon_voices['Voices'] as $key => $value): ?>
+                        <option <?php if ( $amazon_voice == $value['Name'] ) echo 'selected="selected"'; ?> value="<?php echo $value['Name']; ?>"><?php echo $value['LanguageName']; ?> - <?php echo $value['Name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
                 </td>
             </tr>
 

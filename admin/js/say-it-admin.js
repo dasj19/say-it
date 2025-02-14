@@ -19,7 +19,7 @@
 		}
 
 
-		/* Show Voices list according to choises */
+		/* Show Google Voices list according to choises */
 		let $langSelector = $('#say-it-google_language');
 		let $genderSelector = $('#say-it-google_gender');
 
@@ -27,8 +27,10 @@
 			let filter_voices = function(){
 				let language = $langSelector.val();
 				let gender = $genderSelector.val().toUpperCase();
+				let filtered = $("#say-it-google_custom_voice").find(`[data-lang='${language}']`).filter(`[data-gender='${gender}']`);
 				$("#say-it-google_custom_voice").find('option').hide();
-				$("#say-it-google_custom_voice").find(`[data-lang='${language}']`).filter(`[data-gender='${gender}']`).show();
+				filtered.show();
+				$("#say-it-google_custom_voice").val(filtered.first().val());
 			}
 			$langSelector.on('change', filter_voices);
 			$genderSelector.on('change', filter_voices);

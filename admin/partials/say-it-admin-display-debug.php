@@ -13,8 +13,17 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
-
-echo '<h1>Debug Informations</h1>';
-echo '<pre>';
-print_r(get_option($this->plugin_name));
-echo '</pre>';
+$options = $this->options;
+if($options['google_tts_key']){
+    $options['google_tts_key'] = '*****';
+}
+if($options['amazon_polly_secret']){
+    $options['amazon_polly_secret'] = '*****';
+}
+?>
+<div class="card">
+    <h2>Debug Informations</h1>
+    <pre>
+        <?php print_r($options); ?>
+    </pre>
+</div>

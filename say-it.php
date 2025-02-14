@@ -1,13 +1,5 @@
 <?php
-
 /**
- * The plugin bootstrap file
- *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
- *
  * @link              https://www.david-manson.com
  * @since             1.0.0
  * @package           Say_It
@@ -15,7 +7,7 @@
  * @wordpress-plugin
  * Plugin Name:       Say It!
  * Description:       Text to speech plugin helping your website easily say something !
- * Version:           3.0.3
+ * Version:           4.0.1
  * Author:            David Manson
  * Author URI:        https://www.david-manson.com
  * License:           GPL-2.0+
@@ -25,57 +17,39 @@
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
+if ( ! defined( 'WPINC' ) ) { die; }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-define( 'SAY_IT_VERSION', '3.0.3' );
+// Plugin version
+define( 'SAY_IT_VERSION', '4.0.1' );
 
-/**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-say-it-activator.php
- */
-function activate_say_it() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-say-it-activator.php';
-	Say_It_Activator::activate();
-}
-
-/**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-say-it-deactivator.php
- */
-function deactivate_say_it() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-say-it-deactivator.php';
-	Say_It_Deactivator::deactivate();
-}
-
-register_activation_hook( __FILE__, 'activate_say_it' );
-register_deactivation_hook( __FILE__, 'deactivate_say_it' );
-
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
+/* Main script */
 require plugin_dir_path( __FILE__ ) . 'includes/class-say-it.php';
-
-/**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
- * @since    1.0.0
- */
 function run_say_it() {
-
 	$plugin = new Say_It();
 	$plugin->run();
-
 }
 run_say_it();
+
+
+
+
+/* Should be moved */
+add_action('init', function() {
+		// Register Gutenberg blocks
+		wp_register_script('block-say-it-js', plugin_dir_url( __FILE__ ) . '/gutenberg/js/block-say-it.js');
+		register_block_type('davidmanson/sayit', ['editor_script' => 'block-say-it-js']);
+
+		// Register the sayit format
+		wp_register_script('sayit-format-js', plugins_url( '/gutenberg/js/sayit-format.js', __FILE__ ),
+			array( 'wp-rich-text' )
+		);
+
+		// Register sayit css
+		wp_register_style("sayit-block-css", plugins_url("/gutenberg/style.css", __FILE__), array() , '1.1.0', 'all');
+});
+
+function my_custom_format_enqueue_assets_editor() {
+    wp_enqueue_script( 'sayit-format-js' );
+	wp_enqueue_style( 'sayit-block-css' );
+}
+add_action( 'enqueue_block_editor_assets', 'my_custom_format_enqueue_assets_editor' );

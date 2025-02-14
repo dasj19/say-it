@@ -26,7 +26,6 @@ if ( ! defined( 'WPINC' ) ) die;
     <!-- The tabs -->
     <h2 class="nav-tab-wrapper say-it-tabs">
         <a href="#general" class="nav-tab nav-tab-active">General</a>
-        <a href="#skin" class="nav-tab">Skin</a>
         <a href="#google_tts" class="nav-tab">Google TTS</a>
         <a href="#amazon_key" class="nav-tab">Amazon Polly</a>
         <a href="#help" class="nav-tab">Help</a>
@@ -41,30 +40,32 @@ if ( ! defined( 'WPINC' ) ) die;
         ?>
 
         <div id="google_tts" class="say-it-tab">
-            <?php $this->display_plugin_setup_google_key(); ?>
+            <?php $this->display_template_part('google-key'); ?>
         </div>
 
         <div id="amazon_key" class="say-it-tab">
-            <?php $this->display_plugin_setup_amazon_key(); ?>
-        </div>
-
-        <div id="skin" class="say-it-tab">
-            <?php $this->display_plugin_setup_skin(); ?>
+            <?php $this->display_template_part('amazon-key'); ?>
         </div>
 
         <div id="general" class="say-it-tab active">
-            <?php $this->display_plugin_setup_mode(); ?>
-
-            <div id="sayit_html5_wrapper" class="sayit_admin_wrapper">
-                <?php $this->display_plugin_setup_html5(); ?>
+            <div class="card">
+                <h2>Global</h2>
+                <?php $this->display_template_part('mode'); ?>
             </div>
 
-            <div id="sayit_google_wrapper" class="sayit_admin_wrapper">
-                <?php $this->display_plugin_setup_google(); ?>
+            <div class="card">
+                <h2>HTML5 Voice configuration</h2>
+                <?php $this->display_template_part('html5'); ?>
             </div>
 
-            <div id="sayit_amazon_wrapper" class="sayit_admin_wrapper">
-                <?php $this->display_plugin_setup_amazon(); ?>
+            <div class="card">
+                <h2>Google Voice configuration</h2>
+                <?php $this->display_template_part('google'); ?>
+            </div>
+
+            <div class="card">
+                <h2>Amazon Voice configuration</h2>
+                <?php $this->display_template_part('amazon'); ?>
             </div>
 
         </div>
@@ -75,7 +76,7 @@ if ( ! defined( 'WPINC' ) ) die;
 
     <div id="help" class="say-it-tab">
         <?php print_help($this) ?>
-        <?php $this->display_plugin_setup_debug(); ?>
+        <?php $this->display_template_part('debug'); ?>
     </div>
 
 </div>

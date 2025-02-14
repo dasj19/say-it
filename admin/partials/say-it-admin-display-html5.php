@@ -13,8 +13,7 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
-
-$options = get_option($this->plugin_name);
+$options = $this->options;
 $default_language = ( isset( $options['default_language'] ) && ! empty( $options['default_language'] ) ) ? esc_attr( $options['default_language'] ) : 'en-US';
 $default_speed = ( isset( $options['default_speed'] ) && ! empty( $options['default_speed'] ) ) ? esc_attr( $options['default_speed'] ) : 1;
 
@@ -24,6 +23,7 @@ $languages = array(
     'fr-FR' => __('French (France)', $this->plugin_name),
     'de-DE' => __('German (Germany)', $this->plugin_name),
     'ko-KR' => __('Korean (South Korea)', $this->plugin_name),
+    'zh-cn' => __('Chinese (China)', $this->plugin_name),
     'es-ES' => __('Spanish (Spain)', $this->plugin_name)
 );
 ?>

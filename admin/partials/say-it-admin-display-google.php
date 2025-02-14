@@ -14,22 +14,33 @@
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
 
-$google_langs = $this->get_google_languages();
-$google_languages = Array();
-foreach ($google_langs as $key => $value){
-    $google_languages[$key] = $value['formated'];
-}
-$google_voices = $this->get_voices();
-
-$options = get_option($this->plugin_name);
+// Get current options
+$options = $this->options;
 $google_language = ( isset( $options['google_language'] ) && ! empty( $options['google_language'] ) ) ? esc_attr( $options['google_language'] ) : 'en-US';
 $google_gender = ( isset( $options['google_gender'] ) && ! empty( $options['google_gender'] ) ) ? esc_attr( $options['google_gender'] ) : 'male';
 $google_speed = ( isset( $options['google_speed'] ) && ! empty( $options['google_speed'] ) ) ? esc_attr( $options['google_speed'] ) : 1;
 $google_custom_voice = ( isset( $options['google_custom_voice'] ) && ! empty( $options['google_custom_voice'] ) ) ? esc_attr( $options['google_custom_voice'] ) : '';
 
+// Initialize Google TTS Class
+$google_tts = new Say_It_Google_TTS($this->plugin_name, $this->options);
+
+if($google_tts->enabled){
+    try{
+        $google_langs = $google_tts->get_google_languages();
+        $google_languages = Array();
+        foreach ($google_langs as $key => $value){
+            $google_languages[$key] = $value['formated'];
+        }
+        $google_voices = $google_tts->get_voices();
+    } catch (Throwable $e) {
+        echo '<p class="notice notice-warning inline">Oups, something wrong while getting Google Voices, please check your internet connexion</p>';
+    }
+
+}
+
 ?>
 
-<?php if($this->google_tts_error): ?>
+<?php if($google_tts->get_google_tts_error()): ?>
     <p class="notice notice-warning inline">Oups, something wrong with Google TTS Configuration, please check the Google TTS Tab</p>
 <?php else: ?>
 

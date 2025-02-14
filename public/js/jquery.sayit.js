@@ -3,25 +3,32 @@
     "use strict";
     
     // Global object for the Google Audio player 
-    window.gAudio = null;
+    window.streamAudio = null;
 
     // The actual plugin constructor
-    function Plugin ( element, options, gAudio ) {
+    function Plugin ( element ) {
         this.el = $(element);
+        this.text = this.el.attr('data-say-content') || this.el.text();
+        this.mp3_src = this.el.attr('data-mp3-file');
+        this.mode = this.el.attr('data-mode');
+        this.tooltip = this.el.attr('data-tooltip');
         this.msg = null;
-        this.loop = 0;
-        this.alt_mp3_src = this.el.attr('alt-file');
-        this.has_alt_mp3 = (this.alt_mp3_src)?true:false;
         this.init();
     }
 
     // Avoid Plugin.prototype conflicts
     $.extend( Plugin.prototype, {
         init: function() {
-            if(this.has_alt_mp3){
+            this.addTooltip();
+            if(this.mp3_src && this.mode !== 'html5'){
                 this.initMp3file();
             }else{
                 this.initHTML5Speak();
+            }
+        },
+        addTooltip: function() {
+            if(this.tooltip){
+                this.el.append('<span class="sayit-tooltip">'+this.tooltip+'</span>')
             }
         },
         initHTML5Speak: function() {
@@ -29,7 +36,7 @@
 
             // Set the Speech
             this.msg.text = this.el.attr('data-say-content') || this.el.text();
-            this.msg.rate = this.el.attr('data-speed') || 0.8;
+            this.msg.rate = this.el.attr('data-speed') || 1;
             this.msg.lang = this.el.attr('data-lang') || 'en-US';
 
             // Bind function
@@ -42,27 +49,18 @@
             this.el.on('click', this.AltMp3Speak.bind(this));
         },
         AltMp3Speak: function(e) {
-            if($(e.target).is('a') ){
-                return console.log('got a link, not playing');      
-            }
             e.stopPropagation();
-            if(window.gAudio){
-                window.gAudio.pause();
+            if(window.streamAudio){
+                window.streamAudio.pause();
             }
-            console.log('mp3 say...');
-            this.loop++;
-            window.gAudio = new Audio(this.alt_mp3_src);
-            window.gAudio.playbackRate = (this.loop%2)?1:0.70;
-            window.gAudio.onplay = () => this.el.addClass('active');
-            window.gAudio.onended = () => this.el.removeClass('active');
-            window.gAudio.onpause = () => this.el.removeClass('active');
-            window.gAudio.play();
+            window.streamAudio = new Audio(this.mp3_src);
+            window.streamAudio.onplay = () => this.el.addClass('active');
+            window.streamAudio.onended = () => this.el.removeClass('active');
+            window.streamAudio.onpause = () => this.el.removeClass('active');
+            window.streamAudio.play();
             return;
         },
         HTML5Speak: function(e) {
-            if($(e.target).is('a') ){
-                return console.log('got a link, not playing');      
-            }
             e.stopPropagation();
             // Speacking before ? Stop !
             if(speechSynthesis.speaking) speechSynthesis.cancel()        
@@ -75,25 +73,47 @@
     // A really lightweight plugin wrapper around the constructor,
     // preventing against multiple instantiations
     $.fn.sayIt = function( options ) {
-        let gAudio = null;
+        let streamAudio = null;
         return this.each( function() {
             if ( !$.data( this, "plugin_sayIt" ) ) {
-                $.data( this, "plugin_sayIt", new Plugin( this, options, gAudio ) );
+                $.data( this, "plugin_sayIt", new Plugin( this, options, streamAudio ) );
             }
         } );
     };
+
+    function bulkLoadMP3(callback){
+        var toBeLoaded = $('.sayit:not([data-mp3-file])');
+
+        var wordsArray = toBeLoaded.map(function(){
+            return $(this).attr('data-say-content') || $(this).text();
+        }).get();
+
+        if(wordsArray.length <= 0){
+            return callback();
+        }
+
+        wp.ajax.post( "sayit_mp3_bulk", {words: wordsArray} )
+            .done(function(response) {
+                console.log(response);
+                toBeLoaded.each(function(index){
+                    $(this).attr('data-mp3-file', response[index]);
+                });
+                callback();
+            }).fail(function() {
+                console.log("erreur de récupération de mp3 sayit");
+                callback();
+            });
+    }
     
     $(function(){
-        $('.sayit').sayIt();
+        bulkLoadMP3(function(){
+            $('.sayit').sayIt();
+        });
 
         $('body').on('click', function(){
             if(speechSynthesis.speaking) speechSynthesis.cancel()
-            if(window.gAudio) window.gAudio.pause();
+            if(window.streamAudio) window.streamAudio.pause();
         })
-        window.addEventListener('blur', function(){
-            if(speechSynthesis.speaking) speechSynthesis.cancel()
-            if(window.gAudio) window.gAudio.pause();
-        });
     })
 
 

@@ -13,8 +13,7 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) die;
-
-$options = get_option($this->plugin_name);
+$options = $this->options;
 $skin = ( isset( $options['skin'] ) && ! empty( $options['skin'] ) ) ? esc_attr( $options['skin'] ) : 0;
 $tooltip_text = ( isset($options['tooltip_text']) ) ? $options['tooltip_text'] : '';
 $theme_root = $this->folder . 'public/css/themes';

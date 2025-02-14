@@ -2,7 +2,8 @@
 <?php
 function print_help($self){
 ?>
-    <h1>How to use</h1>
+<div class="card">
+    <h2>How to use</h2>
     <h3>[sayit]Blah blah[/sayit]</h3>
     <p>This is the shortcode you will use to transform "Blah blah" into a zone that will speak upon click</p>
 
@@ -17,5 +18,5 @@ function print_help($self){
     [sayit block="1" lang="en-GB" speed="1"]&lt;p&gt;Hello I am the queen&lt;/p&gt;
     &lt;p&gt;And I talk for two paragraph long&lt;/p&gt;[/sayit]
     </p>
-
+</div>
 <?php } ?>
